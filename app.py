@@ -74,12 +74,13 @@ def upload_file():
 
 
 
-# # Retrieve a report
-# @app.route("/report", methods = ["GET"])
-# def get_report():
-#     payrollReport = helpers.make_report(con)
-#     return
-# #
+# Retrieve a report
+@app.route("/payroll_report", methods = ["GET"])
+def get_report():
+    payrollReport = helpers.make_payroll_report(con)
+    return jsonify(payrollReport)
+
+
 # @app.errorhandler(404)
 # def page_not_found(e):
 #     return "<h1>404</h1><p>The resource could not be found.</p>", 404

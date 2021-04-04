@@ -20,7 +20,7 @@ from app import app
 # app.config['TESTING'] = True  # to get full tracebacks in our tests
 
 #     self.app = app.test_client()
-class TestCSVEndpoint(unittest.TestCase):
+class TestUploadFileEndpoint(unittest.TestCase):
     def setUp(self):
         # self.backup_items = deepcopy(app.items)  # no references!
         self.app = app.test_client()
@@ -75,8 +75,30 @@ class TestCSVEndpoint(unittest.TestCase):
     def test_existing_report_id(self):
         res = helpers.check_report_id_exsists('42')
         # app.logger.info(res)
-        # self.assertEqual(res.status_code, 400)
         self.assertEqual(True, res)
+
+class TestGetPayrollReportEndpoint(unittest.TestCase):
+    def setUp(self):
+        # self.backup_items = deepcopy(app.items)  # no references!
+        self.app = app.test_client()
+        self.app.testing = True
+    def test_get_employee_id(self):
+        res, data = helpers.get_employee_id()
+        # app.logger.ingo(res)
+        self.assertEqual(200, res)
+
+    # def test_get_amount_paid(self):
+    #     res = helpers.get_amount_paid()
+    #     self.assertEqual(200, res)
+    #
+    # def test_get_pay_period(self):
+    #     res = helpers.get_pay_period()
+    #     self.assertEqual(200, res)
+    #
+    # # case 1
+    # def test_payroll_report(self):
+    #     res = helpers.make_payroll_report()
+    #     self.assertEqual(200, res)
 
 
 

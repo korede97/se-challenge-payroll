@@ -80,9 +80,22 @@ def check_report_id_exsists(report_id):
     if(result):
         app.logger.info('found existing report_id 1')
         return True
-
     return False
 
 
+
+def get_employee_id():
+    cur.execute("SELECT employee_idS FROM t")
+    rows = cur.fetchall()
+    for row in rows:
+        app.logger.info(row)
+    return 400
+
+# def get_amount_paid():
+#     return 400
+#
+# def get_pay_period():
+#     return 400
 # Make a report detailing how much each employee should be paid in each pay period
-# def make_report():
+def make_payroll_report():
+    return 400
