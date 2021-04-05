@@ -1,12 +1,15 @@
 
-from datetime import datetime
+from datetime import datetime, timedelta
 # import datetime
 import logging
 import flask
 import pandas as pd
 import re
 import sqlite3 as sql
+import json
 from flask import jsonify, make_response
+from calendar import monthrange
+
 
 logging.basicConfig(level=logging.DEBUG)
 app = flask.Flask(__name__)
@@ -39,6 +42,7 @@ def to_database(data, report_id):
     # app.logger.info(f'dtype(date) \n {date.dtype}')
     df_new = pd.DataFrame({'date':date, 'employee_id':employee_id, 'hours_worked': hours_worked, 'job_group': job_group, 'report_id':report_id})
     app.logger.info(f'df_new \n {df_new}')
+    app.logger.info('before database connection')
 
     #insert in database
     conn = sql.connect("database.db")
@@ -83,19 +87,52 @@ def check_report_id_exsists(report_id):
     return False
 
 
-
-def get_employee_id():
-    cur.execute("SELECT employee_idS FROM t")
-    rows = cur.fetchall()
-    for row in rows:
-        app.logger.info(row)
-    return 400
-
-# def get_amount_paid():
-#     return 400
-#
-# def get_pay_period():
-#     return 400
 # Make a report detailing how much each employee should be paid in each pay period
+
 def make_payroll_report():
-    return 400
+    conn = sql.connect("database.db")
+    conn.row_factory = sql.Row
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM t")
+    rows = cur.fetchall()
+
+    temp = {}
+    temp['payRollReport'] = {}
+    temp_list = []
+    for row in rows:
+        # app.logger.info(row['employee_id'])
+        # need to output employee_id as str but also need to sort ?
+        temp_list.append({
+            'employee_id':row["employee_id"],
+            'payPeriod':get_pay_period(row['date']),
+            'amountPaid': calculate_amount_paid(row['hours_worked'], row['job_group'])
+            }
+        )
+    test_dict = {'payRollReport': {'employeeReports':temp_list}}
+    # app.logger.info(json.dumps(temp_list, indent = 4))
+    app.logger.info(json.dumps(test_dict, indent = 4))
+
+
+    return 200
+
+def get_pay_period(date_str):
+    start_datetime = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+    if 1 <= start_datetime.day <= 15:
+        end_datetime = start_datetime.replace(day=15)
+        # end_date = datetime.date(start_datetime.year, start_datetime.month,15)
+    elif 16 <= start_datetime.day <= 31:
+        _,day=monthrange(start_datetime.year, start_datetime.month)
+        end_datetime = start_datetime.replace(day = day)
+
+    start_date = start_datetime.date()
+    end_date = end_datetime.date()
+
+    app.logger.debug(start_date)
+
+    return {'startDate': start_date.strftime("%Y-%m-%d"), 'endDate': end_date.strftime("%Y-%m-%d")}
+
+def calculate_amount_paid(hours_worked, job_group):
+    if job_group == "A":
+        return "$"+"{:.2f}".format((hours_worked*20))
+        # return "$"+"%.2f"%(hours_worked*20)
+    return "$"+"{:.2f}".format((hours_worked*30))

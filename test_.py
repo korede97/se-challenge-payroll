@@ -67,7 +67,7 @@ class TestUploadFileEndpoint(unittest.TestCase):
     #     filename = 'time-report-42'
     #     with open('time-report-42.csv','rb') as csvFile:
     #         data = {'file': ('time-report-42.csv', csvFile,'text/csv')}
-    #         res = helpers.read_file(csvFile)
+    #         res = helpers.to_database(csvFile)
     #     csvFile.close()
     #     # app.logger.info(res[0])
     #     self.assertEqual(res[0], 200)
@@ -82,23 +82,10 @@ class TestGetPayrollReportEndpoint(unittest.TestCase):
         # self.backup_items = deepcopy(app.items)  # no references!
         self.app = app.test_client()
         self.app.testing = True
-    def test_get_employee_id(self):
-        res, data = helpers.get_employee_id()
-        # app.logger.ingo(res)
+    # case 1
+    def test_payroll_report(self):
+        res = helpers.make_payroll_report()
         self.assertEqual(200, res)
-
-    # def test_get_amount_paid(self):
-    #     res = helpers.get_amount_paid()
-    #     self.assertEqual(200, res)
-    #
-    # def test_get_pay_period(self):
-    #     res = helpers.get_pay_period()
-    #     self.assertEqual(200, res)
-    #
-    # # case 1
-    # def test_payroll_report(self):
-    #     res = helpers.make_payroll_report()
-    #     self.assertEqual(200, res)
 
 
 

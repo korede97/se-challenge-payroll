@@ -66,9 +66,9 @@ def upload_file():
     app.logger.info("upload payroll")
 
     status, msg,data = helpers.read_file(payroll_file)
-    app.logger.info(data)
+    # app.logger.info(data)
     status, msg,report_id = helpers.get_report_id(filename)
-    app.logger.info(report_id)
+    # app.logger.info(report_id)
     status, msg = helpers.to_database(data, report_id)
     return jsonify({"message": msg}), status
 
