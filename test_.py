@@ -83,7 +83,7 @@ class TestGetPayrollReportEndpoint(unittest.TestCase):
         self.app = app.test_client()
         self.app.testing = True
     # case 1
-    def test_payroll_report(self):
+    def test_simple_payroll_report(self):
         res = helpers.make_payroll_report()
         self.assertEqual(200, res)
 

@@ -9,6 +9,8 @@ import sqlite3 as sql
 import json
 from flask import jsonify, make_response
 from calendar import monthrange
+from operator import itemgetter
+
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -108,7 +110,15 @@ def make_payroll_report():
             'amountPaid': calculate_amount_paid(row['hours_worked'], row['job_group'])
             }
         )
-    test_dict = {'payRollReport': {'employeeReports':temp_list}}
+
+    # newlist = sorted(temp_list, key=itemgetter('employee_id', 'startDate'))
+    newlist = sorted(temp_list, key=lambda x: (
+                    x['employee_id'],
+                    x['payPeriod']['startDate']
+                )
+            )
+
+    test_dict = {'payRollReport': {'employeeReports':newlist}}
     # app.logger.info(json.dumps(temp_list, indent = 4))
     app.logger.info(json.dumps(test_dict, indent = 4))
 
