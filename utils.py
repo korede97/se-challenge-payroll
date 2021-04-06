@@ -9,7 +9,7 @@ import re
 import json
 from flask import jsonify, make_response
 from calendar import monthrange
-# from operator import itemgetter
+from operator import itemgetter
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -49,36 +49,83 @@ def parse_employee_logs(data, report_id):
 # Make a report detailing how much each employee should be paid in each pay period
 
 def make_payroll_report(rows):
-    # conn = sql.connect("payroll.db")
+
     temp_list = []
     for row in rows:
+        employee_id = row["employee_id"]
+        pay_period = get_pay_period(row['date'])
+        end_date = pay_period["endDate"]
+        amount_paid = calculate_amount_paid(row['hours_worked'], row['job_group'])
+        # app.logger.debug(f'employee_id: {employee_id}')
+        #
+        # app.logger.debug(f'enddate: {end_date}')
+
+        check_list = check_log_with_same_pay_period(temp_list, employee_id,end_date, amount_paid)
+        if(check_list):
+            # app.logger.debug('same...')
+            temp_list = check_list
+            continue
+
         temp_list.append({
-            'employee_id':str(row["employee_id"]),
-            'payPeriod':get_pay_period(row['date']),
-            'amountPaid': calculate_amount_paid(row['hours_worked'], row['job_group'])
+            'employee_id':str(employee_id),
+            'payPeriod':pay_period,
+            'amountPaid': amount_paid
             }
         )
 
+    # sorted by employee id and then pay period start
     # newlist = sorted(temp_list, key=itemgetter('employee_id', 'startDate'))
     employeeReports_list = sorted(temp_list, key=lambda x: (
             x['employee_id'],
             x['payPeriod']['startDate']
         )
     )
-
+    # employeeReports_list = new_make_payroll_report()
     payrollReport = {'payRollReport': {'employeeReports':employeeReports_list}}
     # app.logger.info(json.dumps(test_dict, indent = 4))
 
     return 200, payrollReport
 
+def check_log_with_same_pay_period(temp_list, employee_id, end_date, amount_paid):
+    # app.logger.debug('checking logs with same pay period')
+    check_list = temp_list.copy()
+    # app.logger.debug(f'list of size {len(check_list)}')
+    for i in range(0,len(check_list)):
+        # app.logger.debug(f'index: {i}')
+        if int(check_list[i]['employee_id']) == employee_id:
+            # log_1_payPeriod = get_pay_period(log_1['date'])
+            # app.logger.debug('same employee ')
+
+            # app.logger.debug(f'{check_list[i]["employee_id"]} - {employee_id}')
+            # app.logger.debug(f'{check_list[i]["payPeriod"]["endDate"] } - {end_date}')
+
+            if check_list[i]["payPeriod"]["endDate"] == end_date:
+                # app.logger.debug('same enddate')
+
+                # check if job group check_list
+                # app.logger.debug(f'{check_list[i]["payPeriod"]["endDate"] } - {end_date}')
+                amount_1_str = check_list[i]["amountPaid"]
+                amount_1_int = int(re.findall('\d+', amount_1_str)[0])
+                amount_2_str = amount_paid
+                amount_2_int = int(re.findall('\d+', amount_2_str)[0])
+                tot_amount = amount_1_int + amount_2_int
+                # app.logger.debug(f'tot_amount: {tot_amount}')
+                check_list[i]["amountPaid"] = "$"+"{:.2f}".format(tot_amount)
+                return check_list
+    return None
+
+
 def get_pay_period(date_str):
-    start_datetime = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
-    if 1 <= start_datetime.day <= 15:
-        end_datetime = start_datetime.replace(day=15)
+    date_datetime = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+
+    if 1 <= date_datetime.day <= 15:
+        start_datetime = date_datetime.replace(day = 1)
+        end_datetime = date_datetime.replace(day = 15)
         # end_date = datetime.date(start_datetime.year, start_datetime.month,15)
-    elif 16 <= start_datetime.day <= 31:
-        _,day=monthrange(start_datetime.year, start_datetime.month)
-        end_datetime = start_datetime.replace(day = day)
+    elif 16 <= date_datetime.day <= 31:
+        _,num_day=monthrange(date_datetime.year, date_datetime.month)
+        start_datetime = date_datetime.replace(day = 16)
+        end_datetime = date_datetime.replace(day = num_day)
 
     start_date = start_datetime.date()
     end_date = end_datetime.date()

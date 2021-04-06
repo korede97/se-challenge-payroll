@@ -9,7 +9,6 @@ import pandas as pd
 import logging
 import utils, model
 
-# logging.basicConfig(level=logging.DEBUG)
 model = model.PayrollReport('payroll')
 
 app = Flask(__name__)
@@ -47,7 +46,7 @@ def upload_file():
     # model = PayrollReport()
     # conn = model.get_conn()
     status, msg, df = utils.parse_employee_logs(data, report_id)
-    model.insert_csv(df, report_id)
+    status, msg = model.insert_csv(df, report_id)
     model.close_conn()
     return jsonify({"message": msg}), status
 
@@ -58,10 +57,8 @@ def upload_file():
 def get_report():
     app.logger.info('get_report')
     rows = model.get_records()
-    # for row in rows:
-    #     app.logger.debug(row)
     status, payrollReport = utils.make_payroll_report(rows)
-    # app.logger.debug(json.dumps(payrollReport, indent = 4))
+    app.logger.debug(json.dumps(payrollReport, indent = 4))
     model.close_conn()
     return json.dumps(payrollReport)
 

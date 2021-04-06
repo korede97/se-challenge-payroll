@@ -27,9 +27,10 @@ class PayrollReport():
         if(self.check_report_id_exsists(report_id)):
             # app.logger.info('found existing report_id 2')
             return 400, "report id already exists"
-        df.to_sql('employee_logs',conn, if_exists= 'replace', index = False)
+        df.to_sql('employee_logs',conn, if_exists= 'append', index = False)
         conn.commit()
         # conn.close()
+        return 200, "Updated table"
 
     # check if report_id already exists in database
     def check_report_id_exsists(self, report_id):
