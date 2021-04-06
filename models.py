@@ -21,15 +21,14 @@ class PayrollReport():
         conn.commit()
         conn.close()
 
+    #update database
     def insert_csv(self, df, report_id):
         conn = self.get_conn()
         # cur.execute("INSERT INTO t (report_id, employee_id, job_group, hours_worked, date) VALUES (?,?,?,?,?)",(report_id,employee_id,job_group,hours_worked,date) )
         if(self.check_report_id_exsists(report_id)):
-            # app.logger.info('found existing report_id 2')
             return 400, "report id already exists"
         df.to_sql('employee_logs',conn, if_exists= 'append', index = False)
         conn.commit()
-        # conn.close()
         return 200, "Updated table"
 
     # check if report_id already exists in database
@@ -40,12 +39,11 @@ class PayrollReport():
         result = cur.fetchone()
 
         if(result):
-            # app.logger.info('Error existing report_id 1')
             return True
         return False
 
 
-    def get_records(self):
+    def get_logs(self):
         app.logger.info('get_records')
         conn = self.get_conn()
         conn.row_factory = sqlite3.Row

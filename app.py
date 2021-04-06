@@ -7,9 +7,9 @@ import os
 import sqlite3 as sql
 import pandas as pd
 import logging
-import utils, model
+import utils, models
 
-model = model.PayrollReport('payroll')
+model = models.PayrollReport('payroll')
 
 app = Flask(__name__)
 
@@ -48,19 +48,19 @@ def upload_file():
     status, msg, df = utils.parse_employee_logs(data, report_id)
     status, msg = model.insert_csv(df, report_id)
     model.close_conn()
-    return jsonify({"message": msg}), status
-
+    return make_response(jsonify({"message": msg}), status)
 
 
 # Retrieve a report
 @app.route("/payroll_report", methods = ["GET"])
 def get_report():
     app.logger.info('get_report')
-    rows = model.get_records()
+    rows = model.get_logs()
     status, payrollReport = utils.make_payroll_report(rows)
-    app.logger.debug(json.dumps(payrollReport, indent = 4))
+    # app.logger.debug(json.dumps(payrollReport, indent = 4))
     model.close_conn()
-    return json.dumps(payrollReport)
+    # return json.dumps(payrollReport)
+    return make_response(jsonify(payrollReport), status)
 
 
 # @app.errorhandler(404)
