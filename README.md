@@ -135,10 +135,13 @@ Please commit the following to this `README.md`:
     - python app.py
   - Test application (API)
     - python test_.py
-1. Answers to the following questions:
-   - To test that my implementation was correct I devloped the API using Test-Driven-Development (TDD); various test cases through flask api adhering to the features outlined in the _What the application must do_ section. This in part, enabled separated concerns and the use of models. Functions, routes and business logic are moderately modular. Also, I used a logger evaluate signficant output and the behavior. Finally, I created and tested another csv file analogous the sample file in _What the application must do_ section.
+2. Answers to the following questions:
+- How did you test that your implementation was correct?
+     - To test that my implementation was correct I developed the API using Test-Driven-Development (TDD); various test cases through flask api adhering to the features outlined in the _What the application must do_ section. This in part, enabled separated concerns and the use of models. Functions, routes and business logic are moderately modular. Also, I used a logger evaluate signficant output and the behavior. Finally, I created and tested another csv file analogous the sample file in _What the application must do_ section.
+ - If this application was destined for a production environment, what would you add or change?
    - If this application was destined for production, I would use an ORM to optimize SQL queries. Next, I would implement blueprints to stimulate better design practices; efficiently seperating concerns and contributing to code readability. Also, I would ensure all foreseen errors and exceptions are handled. I would have a configuration file, makefile, organized file structure, and route authentication and authorization; since the data is sensitive.
-   - Did not structure code according to a structured framework (blueprints or MVC). Although, refactoring code is necessary for production and collabration, my implementation seperates important concerns and demonstrates features that can be shown to the project manager for timely updates. I was unable to optimize the runtime of functions that could potentially be computationaly heavy. As the database grows, runtime will become more important. I was unable to handle errors and execeptions efficiently.
+ - What compromises did you have to make as a result of the time constraints of this challenge?
+   - I did not structure the code according to a structured framework (blueprints or MVC). Although, refactoring code is necessary for production and collabration, my implementation seperates important concerns and demonstrates features that can be shown to the project manager for timely updates. I was unable to optimize the runtime of functions that could potentially be computationaly heavy. As the database grows, runtime will become more important. I was unable to handle errors and execeptions efficiently.
 
 ## Submission Instructions
 
