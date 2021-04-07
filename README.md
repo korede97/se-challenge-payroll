@@ -134,7 +134,8 @@ Please commit the following to this `README.md`:
   - Run application (API)
     - python app.py
   - Test application (API)
-    - python test_.py
+    - python test_.py OR nose2 (if installed)
+    - Press CTRL+C to stop and get test results
 2. Answers to the following questions:
 - How did you test that your implementation was correct?
      - To test that my implementation was correct I developed the API using Test-Driven-Development (TDD); various test cases through flask api adhering to the features outlined in the _What the application must do_ section. This in part, enabled separated concerns and the use of models. Functions, routes and business logic are moderately modular. Also, I used a logger evaluate signficant output and the behavior. Finally, I created and tested another csv file analogous the sample file in _What the application must do_ section.
