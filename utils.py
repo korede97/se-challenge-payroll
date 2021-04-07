@@ -5,10 +5,11 @@ import logging
 import flask
 import pandas as pd
 import re
-# import sqlite3 as sql
 import json
 from flask import jsonify, make_response
 from calendar import monthrange
+import collections
+
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -21,6 +22,22 @@ def read_file(file):
     app.logger.info("read file")
     # app.logger.info(data)
     return 200, "uploaded successfully", data
+
+
+def check_csv_specification(data, filename):
+    # ensure there is well-informed file name
+    filename_split = re.findall('time-report-\d{2}',filename)
+    if not filename_split:
+        return False
+    # ensure there is a well-informed headerline
+    ideal_header = ['date', 'hours worked', 'employee id', 'job group']
+    result = all(map(lambda x, y: x == y, data.columns, ideal_header))
+
+    # app.logger.debug(result)
+    if not result:
+        return False
+
+    return True
 
 def get_report_id(filename):
     filename_split = re.findall('\d{2}',filename)

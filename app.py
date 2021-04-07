@@ -2,9 +2,6 @@
 from flask import Flask, request, jsonify, make_response
 from werkzeug.utils import secure_filename
 import json
-
-import os
-import sqlite3 as sql
 import pandas as pd
 import logging
 import utils, models

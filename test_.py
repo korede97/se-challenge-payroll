@@ -35,15 +35,24 @@ class TestUploadFileEndpoint(unittest.TestCase):
         assert res.status_code == 200
         assert res.data == b'Hello, World!'
 
+
     def test_read_file(self):
         filename = 'time-report-42.csv'
         with open(filename,'rb') as csvFile:
             data = {'file': (filename, csvFile,'text/csv')}
-            res = utils.read_file(csvFile)
+            status, msg,data = utils.read_file(csvFile)
         csvFile.close()
         # app.logger.info(res[0])
-        self.assertEqual(res[0], 200)
+        self.assertEqual(status, 200)
 
+    def test_csv_specification(self):
+        filename = 'time-report-42.csv'
+        with open(filename,'rb') as csvFile:
+            data = {'file': (filename, csvFile,'text/csv')}
+            status, msg,data = utils.read_file(csvFile)
+        csvFile.close()
+        res = utils.check_csv_specification(data, filename)
+        self.assertEqual(res, True)
 
     def test_parse_report_id(self):
         filename = 'time-report-42.csv'

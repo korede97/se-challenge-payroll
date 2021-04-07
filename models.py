@@ -42,7 +42,7 @@ class PayrollReport():
             return True
         return False
 
-
+    # retrieve data from database
     def get_logs(self):
         app.logger.info('get_records')
         conn = self.get_conn()
